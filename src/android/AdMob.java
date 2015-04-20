@@ -542,6 +542,12 @@ public class AdMob extends CordovaPlugin {
             adView.destroy();
             adView = null;
         }
+        
+        if (interstitialAd != null) {
+        	interstitialAd.setAdListener(null);
+        	interstitialAd = null;
+        }
+        
 		if (adViewLayout != null) {
 			ViewGroup parentView = (ViewGroup)adViewLayout.getParent();
 			if(parentView != null) {
