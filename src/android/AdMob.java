@@ -450,7 +450,6 @@ public class AdMob extends CordovaPlugin {
         
         return null;
     }
-
     
     /**
      * This class implements the AdMob ad listener events.  It forwards the events
@@ -501,7 +500,7 @@ public class AdMob extends CordovaPlugin {
             Log.w("AdMob", "InterstitialAdLoaded");
             webView.loadUrl("javascript:cordova.fireDocumentEvent('onReceiveInterstitialAd');");
             
-            if(autoShowInterstitial) {
+            if (autoShowInterstitial) {
             	executeShowInterstitialAd(true, null);
             }
         }
@@ -514,9 +513,25 @@ public class AdMob extends CordovaPlugin {
         @Override
         public void onAdClosed() {
             webView.loadUrl("javascript:cordova.fireDocumentEvent('onDismissInterstitialAd');");
-            interstitialAd = null;
+            removeInterstitialAd();
         }
         
+    }
+    
+    private void removeInterstitialAd() {
+
+        if(interstitialAd == null) {
+            return;
+        }
+        
+        cordova.getActivity().runOnUiThread(new Runnable(){
+			@Override
+            public void run() {
+			interstitialAd.setAdListener(null);
+            }
+        });
+        
+        interstitialAd = null;
     }
     
     @Override
@@ -539,6 +554,7 @@ public class AdMob extends CordovaPlugin {
     @Override
     public void onDestroy() {
         if (adView != null) {
+            adView.setAdListener(null);
             adView.destroy();
             adView = null;
         }
